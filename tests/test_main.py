@@ -24,7 +24,7 @@ def create_task(title="Test task", done=False):
 
 def test_list_tasks_empty():
     response = client.get("/tasks")
-    assert response.status_code == 999
+    assert response.status_code == 200  # ← change 999 back to 200
     assert response.json() == []
 
 def test_create_task_returns_201():
