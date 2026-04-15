@@ -1,0 +1,37 @@
+# The name shown in GitHub's Actions tab
+name: CI
+
+# Trigger: run on every push to main, and on pull requests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    # Fresh Ubuntu VM for every run
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: clone your repo onto the VM
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: install Python (same version as your Dockerfile)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Step 3: install dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest httpx
+
+      # Step 4: run tests — if this fails, the job stops here
+      - name: Run tests
+        run: pytest tests/ -v
+
+      # Step 5: build the Docker image — only reached if tests pass
+      - name: Build Docker image
+        run: docker build -t todo-api .
